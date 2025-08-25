@@ -384,8 +384,9 @@ html, body { height: 100%; margin: 0; }
             }
             highlightLayer.openPopup();
         }
+
         var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:1
+            zoomControl:false, maxZoom:28, minZoom:5
         }).fitBounds([[-18.792526138955395,-89.94475065216048],[0.4272491007973172,-60.03575894076365]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
@@ -725,7 +726,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(137,205,102,0.9)',
+                fillColor: 'rgba(137,205,102,0.8)',
                 interactive: true,
             }
                     break;
@@ -735,7 +736,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,255,0,0.9)',
+                fillColor: 'rgba(255,255,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -745,7 +746,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,170,0,0.9)',
+                fillColor: 'rgba(255,170,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -755,7 +756,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,0,0,0.9)',
+                fillColor: 'rgba(255,0,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -849,7 +850,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(137,205,102,0.9)',
+                fillColor: 'rgba(137,205,102,0.8)',
                 interactive: true,
             }
                     break;
@@ -859,7 +860,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,255,0,0.9)',
+                fillColor: 'rgba(255,255,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -869,7 +870,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,170,0,0.9)',
+                fillColor: 'rgba(255,170,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -879,7 +880,7 @@ html, body { height: 100%; margin: 0; }
                 stroke: false, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,0,0,0.9)',
+                fillColor: 'rgba(255,0,0,0.8)',
                 interactive: true,
             }
                     break;
@@ -1088,7 +1089,7 @@ html, body { height: 100%; margin: 0; }
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 2.0,
+                weight: 1.0,
                 fillOpacity: 0,
                 interactive: false,
             }
@@ -1312,21 +1313,27 @@ html, body { height: 100%; margin: 0; }
             // Llamada para construir la leyenda
             renderLegendFromTree(overlaysTree);
 
-            var lay = L.control.layers.tree(null, overlaysTree,{
-            //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
-            //collapseAll: 'Collapse all',
-            //expandAll: 'Expand all',
-            collapsed: false, 
-        });
-        lay.addTo(map);
+                // 1) Crear e inicializar el control
+var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false }).addTo(map);
 
-        
+// 2) Tomar el contenedor real del control y moverlo al panel
+const layersContentEl = document.getElementById('layers-content');
+const layContainer   = lay.getContainer();          // <div class="leaflet-control-layers ...">
+if (layersContentEl && layContainer && layContainer.parentNode) {
+  // lo sacamos de la esquina del mapa…
+  layContainer.parentNode.removeChild(layContainer);
+  // …y lo insertamos en el sidebar
+  layersContentEl.innerHTML = '';                   // limpia si recargas
+  layersContentEl.appendChild(layContainer);
+}
+
+// (Opcional) evita que el scroll/click del control afecte al mapa
+L.DomEvent.disableClickPropagation(layContainer);
+L.DomEvent.disableScrollPropagation(layContainer);
+
         // Inyectar el control en el div #layers-content del sidebar
-        const layersContentEl = document.getElementById('layers-content');
-        layersContentEl.appendChild(lay.onAdd(map));
+        // const layersContentEl = document.getElementById('layers-content');                                  
+        // layersContentEl.appendChild(lay.onAdd(map));
 		document.addEventListener("DOMContentLoaded", function() {
             // set new Layers List height which considers toggle icon
             function newLayersListHeight() {
@@ -1384,7 +1391,7 @@ html, body { height: 100%; margin: 0; }
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['DEPARTAMEN'] !== null?String('<div style="color: #323232; font-size: 5pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['DEPARTAMEN']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Departamentos_6'});
+            // layer.bindTooltip((layer.feature.properties['DEPARTAMEN'] !== null?String('<div style="color: #323232; font-size: 5pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['DEPARTAMEN']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Departamentos_6'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
