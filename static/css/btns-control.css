@@ -1,0 +1,42 @@
+/* Estilo del botón Estratificación */
+.leaflet-bar .btns-control {
+    display: block;
+    width: 120px; /* Ancho del botón */
+    height: 40px; /* Altura del botón */
+    line-height: 40px; /* Centrar verticalmente el texto */
+    text-align: center;
+    background-color: #007bff; /* Color de fondo */
+    border-radius: 5px; /* Bordes redondeados */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); /* Sombra */
+    margin-bottom: 2px;
+    font-size: 14px; /* Ajuste de tamaño de la fuente */
+    color: #ffffff; /* Color de texto */
+    cursor: pointer;
+    z-index: 1001; /* Asegurarse de que el botón esté encima de otros controles */
+}
+
+/* Hover del botón Estratificación */
+.leaflet-bar .btns-control:hover {
+    background-color: #0056b3; /* Color de fondo en hover */
+    color: #ffffff; /* Color de texto en hover */
+}
+
+/* Estilo para el contenedor del botón de Estratificación */
+#estratificacionControlBtn {
+    position: horizontal;
+    top: 100px; /* Ajustar según la posición de tus controles */
+    left: 10px; /* Ajustar la distancia desde el borde derecho */
+    z-index: 1001; /* Asegurarse de que el botón esté encima de otros controles */
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #007bff; /* Color de fondo */
+    color: #fff; /* Color del texto */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Hover del botón */
+#estratificacionControlBtn:hover {
+    background-color: #0056b3; /* Color al pasar el ratón */
+}
