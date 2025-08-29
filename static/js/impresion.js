@@ -1,59 +1,63 @@
-function imprimirMapa() {
-    // Crear ventana de impresión
-    var printWindow = window.open('', '', 'width=800,height=600');
+document.getElementById('btnPrint').addEventListener('click', function () {
+    // Crear un marcador temporal para el indicador de norte (solo para impresión)
+    var northIcon = L.icon({
+        iconUrl: 'static/img/norte.jpg', // Ruta del icono del norte
+        iconSize: [30, 30], // Tamaño del icono
+        iconAnchor: [15, 15], // Punto de anclaje
+    });
 
     // Asegúrate de que el mapa y el contenido estén listos
-    setTimeout(function() {
-        // Obtener la imagen del mapa (esto debe estar listo en el momento adecuado)
-        var mapImage = document.getElementById('map').toDataURL();
+    map.once('load', function () {
+        // Crear un marcador y colocarlo en una posición fija, por ejemplo, en la esquina superior izquierda
+        var northMarker = L.marker([map.getCenter().lat + 0.05, map.getCenter().lng], {
+            icon: northIcon
+        }).addTo(map);
 
-        // Recoger las capas activas y generar la leyenda correspondiente
-        var legendContent = '';
-        overlaysTree.forEach(function(node) {
-            // Verificar si la capa está activa en el mapa
-            if (map.hasLayer(node.layer)) {
-                // Si está activa, agregar la leyenda correspondiente
-                legendContent += `
-                    <div class="legend-block">
-                        <h3>${node.label}</h3>
-                    </div>
-                `;
+        // Usar leaflet-image para generar una imagen del mapa
+        leafletImage(map, function(err, canvas) {
+            if (err) {
+                console.error('Error al generar la imagen del mapa:', err);
+                return;
             }
+
+            // Convertir el canvas a un formato de imagen
+            var mapImage = canvas.toDataURL();
+
+            // Recoger las capas activas y generar la leyenda correspondiente
+            var legendContent = '';
+            overlaysTree.forEach(function(node) {
+                if (map.hasLayer(node.layer)) {
+                    legendContent += ` 
+                        <div class="legend-block">
+                            <h3>${node.label}</h3>
+                        </div>
+                    `;
+                }
+            });
+
+            // Crear el documento PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Añadir la imagen del mapa al PDF
+            doc.addImage(mapImage, 'PNG', 10, 10, 180, 120); // X, Y, width, height
+            doc.text('Visor de Información Geoespacial', 10, 150);
+
+            // Añadir la leyenda al PDF
+            doc.text('Leyenda:', 10, 160);
+            let legendY = 170;
+            overlaysTree.forEach(function(node) {
+                if (map.hasLayer(node.layer)) {
+                    doc.text(`${node.label}`, 10, legendY);
+                    legendY += 10;
+                }
+            });
+
+            // Guardar el PDF
+            doc.save('mapa.pdf');
+
+            // Remover el marcador del norte después de la impresión
+            map.removeLayer(northMarker);
         });
-
-        // Crear contenido para la ventana de impresión
-        var content = `
-            <html>
-                <head>
-                    <title>Imprimir Mapa</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; }
-                        .map-container { width: 100%; height: 80%; border: 1px solid #ddd; margin-bottom: 20px; }
-                        .legend-container { font-size: 12px; }
-                    </style>
-                </head>
-                <body>
-                    <h2>Visor de Información Geoespacial</h2> <!-- Título ajustado -->
-                    <div class="map-container">
-                        <img src="${mapImage}" alt="Mapa" style="width: 100%; height: auto;">
-                    </div>
-                    <div class="legend-container">
-                        <h3>Leyenda</h3>
-                        ${legendContent}
-                    </div>
-                </body>
-            </html>
-        `;
-
-        // Escribir el contenido en la ventana de impresión
-        printWindow.document.open();
-        printWindow.document.write(content);
-        printWindow.document.close();
-        
-        // Iniciar la impresión
-        printWindow.print();
-    }, 500); // Asegúrate de que el contenido esté listo antes de intentar obtener la imagen
-}
-
-// Llamar la función de impresión cuando el botón de impresión sea presionado
-document.getElementById('btnPrint').addEventListener('click', imprimirMapa);
+    });
+});

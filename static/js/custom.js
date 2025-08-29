@@ -23,7 +23,7 @@ window.addEventListener('load', function () {
                     Visor MIDIS - Dirección General de Calidad de las Prestaciones Sociales
                 </div>
 
-                <div class="vh-actions" style="margin-left:auto; padding-right: 20px;">
+                <div class="vh-actions" style="margin-left:auto; padding-right: 10px;">
                     <button class="vh-icon" data-pane="legend" title="Leyenda"><i class="fa fa-list"></i></button>
                     <button class="vh-icon" data-pane="layers" title="Capas"><i class="fa fa-layer-group"></i></button>
                     <button class="vh-icon" data-pane="basemaps" title="Mapas base"><i class="fa fa-map"></i></button>
@@ -34,14 +34,19 @@ window.addEventListener('load', function () {
 
     // Ajusta altura del mapa en función del header
     const mapEl = document.getElementById('map');
-    function resizeMap() {
-        if (!mapEl || !header) return;
-        const h = header.offsetHeight || 50;
-        mapEl.style.height = `calc(100% - ${h}px)`;
-        if (window.map?.invalidateSize) setTimeout(() => map.invalidateSize(), 50);
+    // Ajusta altura del mapa SOLO en load y resize de ventana
+function resizeMap() {
+    if (!mapEl || !header) return;
+    const h = header.offsetHeight || 50;
+    mapEl.style.height = `calc(100% - ${h}px)`;
+    // Solo invalida el tamaño si map ya existe
+    if (window.map && !window.sidebarRef?.isOpen) {
+        setTimeout(() => map.invalidateSize(), 50);
     }
-    resizeMap();
-    window.addEventListener('resize', resizeMap);
+}
+resizeMap();
+window.addEventListener('resize', resizeMap);
+
 
     // Estado para saber qué pane está abierto
     let currentPane = null;
@@ -73,4 +78,12 @@ window.addEventListener('load', function () {
             currentPane = null;
         });
     }
+    // Agregar escala
+L.control
+    .scale({
+        imperial: false,
+    })
+    .addTo(map);
+    map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/zaideth">Zaideth Rios</a>');
+var autolinker = new Autolinker({truncate: {length: 30, location: 'end'}});
 });

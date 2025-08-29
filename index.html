@@ -26,9 +26,9 @@
         }
         #infoSidebar {
         width: 350px;  /* Ancho del sidebar */
-        height: auto;  /* Ajusta la altura automáticamente según el contenido */
+        height: 50px;  /* Ajusta la altura automáticamente según el contenido */
         max-height: 30%;  /* Limita la altura máxima del sidebar (porcentaje de la altura total de la ventana) */
-        position: fixed;  /* Lo coloca de manera fija en la pantalla */
+        position: absolute;  /* Lo coloca de manera fija en la pantalla */
         top: 10%;  /* Deja un pequeño margen en la parte superior */
         left: -300px;  /* Inicialmente oculto */
         background-color: rgba(255, 255, 255, 0.9);
@@ -47,6 +47,7 @@
         /* Justificar el texto dentro de la tabla de estratificación */
         #infoSidebar table {
             width: 100%;
+            height: 500px;
             border-collapse: collapse;
             text-align: justify;  /* Justificar el texto dentro de la tabla */
             border-radius: 10px;  /* Bordes suaves para la tabla */
@@ -76,6 +77,7 @@
             border: none !important;
             padding: 0 !important;
             margin: 0 !important;
+            height: 500px;
             
         }
         #layers-content .leaflet-control-layers-list {
@@ -98,6 +100,7 @@
         #infoSidebar th, #infoSidebar td {
             padding: 5px;
             text-align: left;  /* Asegura que los textos en las celdas estén alineados a la izquierda */
+            height: 500px;
         }
 
         #infoSidebar td {
@@ -161,7 +164,7 @@
         .top-toolbar button{
             width:36px; height:36px; border:0; background:#f5f5f5; border-radius:8px; cursor:pointer;
             display:flex; align-items:center; justify-content:center; font-size:18px;
-            position: right: 10px; top: 10px;
+            position: right 10px; top: 10px;
         }
         .top-toolbar button:hover{background:#e9e9e9}
 
@@ -172,15 +175,16 @@
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: 1500;        /* por encima del mapa y controles */
+        z-index: 1000;        /* por encima del mapa y controles */
         width: 350px;         /* opcional: tu ancho */
+        height: 500px;
         }
 
-        /* Asegura que el contenido del panel haga scroll si crece
+        /* Asegura que el contenido del panel haga scroll si crece */
         #sidebar .leaflet-sidebar-content {
         height: 100%;
         overflow: auto;
-        } */
+        }
 
         /* Ocultar pestañas nativas del sidebar: usaremos botones en el header */
         #sidebar .leaflet-sidebar-tabs { 
@@ -224,7 +228,7 @@ html, body { height: 100%; margin: 0; }
     margin-left: 0;
     display: inline-block;
     vertical-align: middle;
-    float: left;
+    /* float: left; */
 }
 #sidebar.leaflet-sidebar.collapsed{
   right: -350px;
@@ -267,6 +271,18 @@ html, body { height: 100%; margin: 0; }
 #btnPrint:hover {
     color: #bd0606ff; /* Cambio de color al pasar el mouse */
 }
+@media print {
+    /* Ocultar los controles y elementos innecesarios durante la impresión */
+    .leaflet-control, .top-toolbar, .leaflet-bar, #btnPrintContainer {
+        display: none;
+    }
+
+    /* Asegúrate de que el mapa sea el único visible al imprimir */
+    #map {
+        width: 100%;
+        height: auto;
+    }
+}
 
     </style>
     <title></title>
@@ -294,7 +310,7 @@ html, body { height: 100%; margin: 0; }
     }
     /* Asegurar que el contenido del sidebar haga scroll si es alto */
     #sidebar .leaflet-sidebar-content { 
-    height: 80%; 
+    height: 500px; 
     width: auto;
     /* overflow: auto; */
 
@@ -354,7 +370,14 @@ html, body { height: 100%; margin: 0; }
 }
 .leaflet-control-attribution {
     text-align: right !important;
-    position: right: 10px !important;
+    position: right 10px !important;
+}
+.leaflet-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 1000; /* Sobre el mapa */
 }
 
         </style>
@@ -408,6 +431,10 @@ html, body { height: 100%; margin: 0; }
         <script src="https://unpkg.com/leaflet-sidebar-v2/js/leaflet-sidebar.min.js"></script>
         <script src="https://unpkg.com/leaflet-providers@1.13.0/leaflet-providers.min.js"></script>
         <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-image@0.3.2/leaflet-image.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+         <script src="static/js/impresion.js"></script>
+        <!-- Aquí está el botón de impresión justo debajo del visor-header -->
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -427,10 +454,10 @@ html, body { height: 100%; margin: 0; }
         }
 
         var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:5
+            zoomControl:false, maxZoom:28, minZoom:5.1  
         }).fitBounds([[-18.792526138955395,-89.94475065216048],[0.4272491007973172,-60.03575894076365]]);
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        // map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/zaideth">Zaideth Rios</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'end'}});
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
@@ -479,6 +506,12 @@ html, body { height: 100%; margin: 0; }
         function setBounds() {
         }
         
+        // // Agregar escala
+        // L.control
+        //     .scale({
+        //         imperial: false,
+        //     })
+        //     .addTo(map);
         // Sidebar
         const sidebar = L.control.sidebar({ container: 'sidebar', autopan: true, closeButton: true }).addTo(map);
         sidebar.close(); // arranca cerrado
@@ -842,20 +875,18 @@ html, body { height: 100%; margin: 0; }
                     3: "Escenario Pobreza Extrema Alta",
                     4: "Escenario Pobreza Extrema Muy Alta"
                 };
-
-                var gridValue = feature.properties['gridcode'];
-                var gridText = gridLabels[gridValue] || gridValue;  // si no existe en el diccionario, muestra el número
-
+   
                 var popupContent = '<table>\
-                    <tr>\
-                        <td class="visible-with-data" id="gridcode" colspan="2"><strong>Escenario</strong><br />' 
-                            + (gridText !== null ? autolinker.link(String(gridText).replace(/'/g, '\'').toLocaleString()) : '') 
-                        + '</td>\
+                 <tr>\
+                        <td colspan="2"><strong>' +
+                        (feature.properties['gridcode'] === 1 ? "Escenario Pobreza Extrema Baja" :
+                        feature.properties['gridcode'] === 2 ? "Escenario Pobreza Extrema Media" :
+                        feature.properties['gridcode'] === 3 ? "Escenario Pobreza Extrema Alta" :
+                        feature.properties['gridcode'] === 4 ? "Escenario Pobreza Extrema Muy Alta" :
+                        "Valor no encontrado") +
+                        '</strong></td>\
                     </tr>\
-                    <tr>\
-                        <td class="visible-with-data" id="gridcode" colspan="2"><strong>gridcode</strong><br />' + (feature.properties['gridcode'] !== null ? autolinker.link(String(feature.properties['gridcode']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
+                <tr>\
                         <th scope="row">UBIGEO</th>\
                         <td>' + (feature.properties['UBIGEO'] !== null ? autolinker.link(String(feature.properties['UBIGEO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
@@ -1387,6 +1418,9 @@ html, body { height: 100%; margin: 0; }
                             layersListElement.style.height = newHeight + 'px';
                         }
                     }
+                    // Inicializa la variable isLayersListExpanded
+                    let isLayersListExpanded = True;  // Asumiendo que inicialmente está colapsado
+
                     // var isLayersListExpanded = true;
                     var controlLayersElement = document.querySelector('.leaflet-control-layers');
                     var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
@@ -1486,7 +1520,7 @@ html, body { height: 100%; margin: 0; }
                     mapEl.style.position = 'relative'; // (redundante si ya lo pusiste en CSS)
                 });
                 </script>
-                <script src="static/js/mainMap.js"></script>
+                <!-- <script src="static/js/mainMap.js"></script> -->
                 <!-- <script src="static/js/home.js"></script>  -->
                 <script>
         // Borra cualquier botón heredado/inyectado que no quieras
@@ -1503,7 +1537,7 @@ html, body { height: 100%; margin: 0; }
             a.innerHTML = '<i class="fa fa-home"></i>';
             L.DomEvent.on(a,'click',(e)=>{
                 L.DomEvent.preventDefault(e);
-                map.setView([-9.2,-75], 5);  // tu vista inicial
+                map.setView([-9.2,-75], 5.5);  // tu vista inicial
             });
             return c;
             }
@@ -1513,9 +1547,6 @@ html, body { height: 100%; margin: 0; }
         <script>
         document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
             .forEach(el => el.remove());
-        </script>
-        <script src="static/js/impresion.js"></script>
-        <!-- Aquí está el botón de impresión justo debajo del visor-header -->
-        
+        </script> 
     </body>
 </html>
