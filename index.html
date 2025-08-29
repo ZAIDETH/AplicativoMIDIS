@@ -298,11 +298,16 @@
         background: rgba(255, 255, 255, 0.85); /* blanco con 85% de opacidad */
         border-radius: 8px; /* opcional: bordes redondeados */
         box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* sombra para resaltar */
+        font-size: smaller; /* opcional: texto un poco más pequeño */
+        padding: 3px; /* opcional: algo de padding interno */
+        margin: 0px; /* elimina margen extra */
+        height: auto;
         }
 
         /* El triángulo que apunta al mapa */
         .leaflet-popup-tip {
         background: rgba(255, 255, 255, 0.85); /* mismo color/alpha */
+    
         }
         /* El contenedor ya hace scroll; asegúrate de que tenga altura fija o max */
         #queryResultsContainer {
@@ -458,47 +463,47 @@
             </button>
         </div>
 
-<!-- PANEL DE CONSULTA (sólo DEPARTAMENTO/PROVINCIA/DISTRITO) -->
-<div id="queryPanel" style="position:absolute; top:80px; left:100px; z-index:1200; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); padding:10px; width:380px; display:none;">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-    <strong>Consulta de Programas Sociales</strong>
-    <button id="closeQueryResults" title="Cerrar" style="border:0;background:transparent;cursor:pointer;">✖</button>
-  </div>
+        <!-- PANEL DE CONSULTA (sólo DEPARTAMENTO/PROVINCIA/DISTRITO) -->
+        <div id="queryPanel" style="position:absolute; top:80px; left:100px; z-index:1200; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); padding:10px; width:380px; display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong>Consulta de Programas Sociales</strong>
+            <button id="closeQueryResults" title="Cerrar" style="border:0;background:transparent;cursor:pointer;">✖</button>
+        </div>
 
-  <div style="display:grid; grid-template-columns: 1fr; gap:6px;">
-    <input id="filtroDepartamento" list="departamentosList" placeholder="DEPARTAMENTO" />
-    <datalist id="departamentosList"></datalist>
+        <div style="display:grid; grid-template-columns: 1fr; gap:6px;">
+            <input id="filtroDepartamento" list="departamentosList" placeholder="DEPARTAMENTO" />
+            <datalist id="departamentosList"></datalist>
 
-    <input id="filtroProvincia" list="provinciasList" placeholder="PROVINCIA (o 'Todas')" />
-<datalist id="provinciasList">
-  <option value="Todas">
-</datalist>
+            <input id="filtroProvincia" list="provinciasList" placeholder="PROVINCIA (o 'Todas')" />
+        <datalist id="provinciasList">
+        <option value="Todas">
+        </datalist>
 
-<input id="filtroDistrito" list="distritosList" placeholder="DISTRITO (o 'Todos')" />
-<datalist id="distritosList">
-  <option value="Todos">
-</datalist>
+        <input id="filtroDistrito" list="distritosList" placeholder="DISTRITO (o 'Todos')" />
+        <datalist id="distritosList">
+        <option value="Todos">
+        </datalist>
 
 
-    <button id="btnQueryExecute" style="padding:6px 10px; border:0; border-radius:6px;font-family: Arial, Helvetica, sans-serif;font-size: 10px; background:#bd0606; color:#fff; cursor:pointer;">Buscar</button>
-  </div>
+            <button id="btnQueryExecute" style="padding:6px 10px; border:0; border-radius:6px;font-family: Arial, Helvetica, sans-serif;font-size: 10px; background:#bd0606; color:#fff; cursor:pointer;">Buscar</button>
+        </div>
 
-  <div id="queryResultsContainer" style="margin-top:10px; display:none; max-height:350px; overflow:auto;">
-    <table id="queryResultsTable" style="width:100%; border-collapse:collapse; font-size:10px;font-family: Arial, Helvetica, sans-serif;">
-      <thead>
-        <tr style="background:hsla(0, 0%, 95%, 0.6);">
-            <th style="
-                width: 90px;
-            ">DEPARTAMENTO</th>
-            <th>PROVINCIA</th>
-            <th>DISTRITO</th>
-            <th>Programas MIDIS</th>
-        </tr>
-       </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
+        <div id="queryResultsContainer" style="margin-top:10px; display:none; max-height:350px; overflow:auto;">
+            <table id="queryResultsTable" style="width:100%; border-collapse:collapse; font-size:10px;font-family: Arial, Helvetica, sans-serif;">
+            <thead>
+                <tr style="background:hsla(0, 0%, 95%, 0.6);">
+                    <th style="
+                        width: 90px;
+                    ">DEPARTAMENTO</th>
+                    <th>PROVINCIA</th>
+                    <th>DISTRITO</th>
+                    <th>Programas MIDIS</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            </table>
+        </div>
+        </div>
         <script src="static/js/custom.js"></script>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -680,7 +685,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             var popupTitle = 'Programas Sociales MIDIS'; // Título del popup
                 var popupContent = '<h3>' + popupTitle + '</h3>' +
@@ -854,7 +859,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             var popupContent = '<table>\
                     <tr>\
@@ -886,7 +891,7 @@
 			layer.on('popupopen', function(e) {
 				addClassToPopupIfMedia(content, e.popup);
 			});
-			layer.bindPopup(content, { maxHeight: 400 });
+			layer.bindPopup(content, { maxHeight: 200 });
         }
 
         function style_EscenariodePobrezaExtremaPer_3_0(feature) {
@@ -963,7 +968,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             // Diccionario de equivalencias
                 const gridLabels = {
@@ -1085,7 +1090,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             var popupContent = '<table>\
                     <tr>\
@@ -1231,7 +1236,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             var popupContent = '<table>\
                     <tr>\
@@ -1293,7 +1298,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature, autopan: false,
             });
             var popupContent = '<table>\
                     <tr>\
@@ -1359,7 +1364,7 @@
                         });
                     }
                 },
-                mouseover: highlightFeature,
+                mouseover: highlightFeature,autopan: false,
             });
             var popupContent = '<table>\
                     <tr>\
