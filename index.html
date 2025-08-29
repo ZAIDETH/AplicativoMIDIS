@@ -190,109 +190,144 @@
         #sidebar .leaflet-sidebar-tabs { 
         display: none !important;  }
         /* Altura fija del header */
-:root{ --h-header: 64px; } /* ajusta 64px a tu gusto */
+        :root{ --h-header: 64px; } /* ajusta 64px a tu gusto */
 
-/* Header fijo arriba */
-.visor-header{
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--h-header);
-  z-index: 2000;
-  background:#bd0606ff; color:#fff;
-  display:flex; align-items:center; gap:12px; padding:0 12px;
-}
+        /* Header fijo arriba */
+        .visor-header{
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: var(--h-header);
+        z-index: 2000;
+        background:#bd0606ff; color:#fff;
+        display:flex; align-items:center; gap:12px; padding:0 12px;
+        }
 
-/* El mapa ocupa el resto de la pantalla, debajo del header */
-html, body { height: 100%; margin: 0; }
-#map{
-  position: absolute;
-  top: var(--h-header);
-  left: 0; right: 0; bottom: 0;
-}
+        /* El mapa ocupa el resto de la pantalla, debajo del header */
+        html, body { height: 100%; margin: 0; }
+        #map{
+        position: absolute;
+        top: var(--h-header);
+        left: 0; right: 0; bottom: 0;
+        }
 
-/* Sidebar dentro del mapa */
-#sidebar.leaflet-sidebar{
-  position: absolute !important;
-  top: 0 !important;   /* el propio #map ya está bajo el header */
-  right: 0; bottom: 0; left: auto;
-  width: 350px;
-  transition: right .25s ease;
-  z-index: 1500;
-}
-/* Oculto al iniciar (nada de “caja blanca”) */
+        /* Sidebar dentro del mapa */
+        #sidebar.leaflet-sidebar{
+        position: absolute !important;
+        top: 0 !important;   /* el propio #map ya está bajo el header */
+        right: 0; bottom: 0; left: auto;
+        width: 350px;
+        transition: right .25s ease;
+        z-index: 1500;
+        }
+        /* Oculto al iniciar (nada de “caja blanca”) */
 
-/* Logo alineado a la izquierda en el header */
-.visor-header .logo {
-    height: 40px;
-    margin-right: 16px;
-    margin-left: 0;
-    display: inline-block;
-    vertical-align: middle;
-    /* float: left; */
-}
-#sidebar.leaflet-sidebar.collapsed{
-  right: -350px;
-  pointer-events: none;
-}
+        /* Logo alineado a la izquierda en el header */
+        .visor-header .logo {
+            height: 40px;
+            margin-right: 16px;
+            margin-left: 0;
+            display: inline-block;
+            vertical-align: middle;
+            /* float: left; */
+        }
+        #sidebar.leaflet-sidebar.collapsed{
+        right: -350px;
+        pointer-events: none;
+        }
 
-/* Controles Leaflet en su sitio por defecto */
+        /* Controles Leaflet en su sitio por defecto */
 
-/* Asegura que el cursor sea pointer en el icono de cerrar del sidebar */
-#sidebar .leaflet-sidebar-close {
-    cursor: pointer;
-}
+        /* Asegura que el cursor sea pointer en el icono de cerrar del sidebar */
+        #sidebar .leaflet-sidebar-close {
+            cursor: pointer;
+        }
 
-/* Mejora la interacción: resalta el icono al pasar el mouse */
-#sidebar .leaflet-sidebar-close:hover {
-    background: rgba(0,0,0,0.07);
-    border-radius: 4px;
-}
-.leaflet-top { margin-top: 12px; }
-.leaflet-left { margin-left: 12px; }
-#btnPrintContainer {
-    position: absolute;
-    top: 70px; /* Coloca el botón debajo del header de 64px de altura */
-    left: 20px;
-    z-index: 1000;
-}
-#btnQuery i {
-    font-size: 18px; /* aumenta tamaño del icono */
-    background-color: hwb(0 100% 0% / 0); /* Sin fondo */
-    color:#000;
-    border: 2px;
-    border-color: #808080;
-    border-radius: 2px;
-    box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
-    cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
-    padding: 20; /* Sin padding para que solo se vea el ícono */
-}
-#btnPrint {
-    background-color: white; /* Sin fondo */
-    border: 2px; ; /* Sin borde */
-    border-color: #808080;
-    border-radius: 2px;
-    box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
-    color: #000; /* Color negro para el ícono */
-    font-size: 20px; /* Tamaño adecuado para el ícono */
-    cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
-    padding: 20; /* Sin padding para que solo se vea el ícono */
-}
+        /* Mejora la interacción: resalta el icono al pasar el mouse */
+        #sidebar .leaflet-sidebar-close:hover {
+            background: rgba(0,0,0,0.07);
+            border-radius: 4px;
+        }
+        .leaflet-top { margin-top: 12px; }
+        .leaflet-left { margin-left: 12px; }
+        #btnPrintContainer {
+            position: absolute;
+            top: 70px; /* Coloca el botón debajo del header de 64px de altura */
+            left: 20px;
+            z-index: 1000;
+        }
+        #btnQuery i {
+            font-size: 20px; /* aumenta tamaño del icono */
+            background-color: hwb(0 100% 0% / 0); /* Sin fondo */
+            color:#000;
+            border: 2px;
+            border-color: #808080;
+            border-radius: 2px;
+            box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
+            cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
+            padding: 20; /* Sin padding para que solo se vea el ícono */
+        }
+        #btnPrint {
+            background-color: white; /* Sin fondo */
+            border: 2px; ; /* Sin borde */
+            border-color: #808080;
+            border-radius: 2px;
+            box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
+            color: #000; /* Color negro para el ícono */
+            font-size: 20px; /* Tamaño adecuado para el ícono */
+            cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
+            padding: 20; /* Sin padding para que solo se vea el ícono */
+        }
 
-#btnPrint:hover {
-    color: #bd0606ff; /* Cambio de color al pasar el mouse */
-}
-@media print {
-    /* Ocultar los controles y elementos innecesarios durante la impresión */
-    .leaflet-control, .top-toolbar, .leaflet-bar, #btnPrintContainer {
-        display: none;
-    }
+        #btnPrint:hover {
+            color: #bd0606ff; /* Cambio de color al pasar el mouse */
+        }
+        @media print {
+            /* Ocultar los controles y elementos innecesarios durante la impresión */
+            .leaflet-control, .top-toolbar, .leaflet-bar, #btnPrintContainer {
+                display: none;
+            }
 
-    /* Asegúrate de que el mapa sea el único visible al imprimir */
-    #map {
+            /* Asegúrate de que el mapa sea el único visible al imprimir */
+            #map {
+                width: 100%;
+                height: auto;
+            }
+        }
+        /* Fondo del contenido del popup */
+        .leaflet-popup-content-wrapper {
+        background: rgba(255, 255, 255, 0.85); /* blanco con 85% de opacidad */
+        border-radius: 8px; /* opcional: bordes redondeados */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* sombra para resaltar */
+        }
+
+        /* El triángulo que apunta al mapa */
+        .leaflet-popup-tip {
+        background: rgba(255, 255, 255, 0.85); /* mismo color/alpha */
+        }
+        /* El contenedor ya hace scroll; asegúrate de que tenga altura fija o max */
+        #queryResultsContainer {
+        max-height: 300px;        /* ajústalo a gusto */
+        overflow: auto;           /* el scroll ocurre aquí */
+        }
+
+        /* Mantiene el header pegado arriba mientras se hace scroll */
+        #queryResultsTable {
         width: 100%;
-        height: auto;
-    }
-}
+        border-collapse: collapse;
+        table-layout: fixed;      /* evita saltos de ancho entre columnas */
+        }
+
+        #queryResultsTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;               /* sobre las filas del body */
+        background: rgba(255,255,255,0.95); /* fondo casi opaco para legibilidad */
+        backdrop-filter: saturate(120%) blur(2px); /* opcional, efecto vidrio */
+        /* Extras de estilo, opcional */
+        box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+        padding: 6px;
+        }
+
 
     </style>
     <title></title>
@@ -311,84 +346,84 @@ html, body { height: 100%; margin: 0; }
         </ul>
     </div>
     <style>
-    .leaflet-sidebar-tabs-right {
-        right: 0;
-        left: auto;
-    }
-    .leaflet-sidebar-tabs-right ul {
-        float: left;
-    }
-    /* Asegurar que el contenido del sidebar haga scroll si es alto */
-    #sidebar .leaflet-sidebar-content { 
-    height: 500px; 
-    width: auto;
-    /* overflow: auto; */
+        .leaflet-sidebar-tabs-right {
+            right: 0;
+            left: auto;
+        }
+        .leaflet-sidebar-tabs-right ul {
+            float: left;
+        }
+        /* Asegurar que el contenido del sidebar haga scroll si es alto */
+        #sidebar .leaflet-sidebar-content { 
+        height: 500px; 
+        width: auto;
+        /* overflow: auto; */
 
-    }
+        }
 
-    /* (Opcional) oculta la "top-toolbar" flotante si aún existe */
-    .top-toolbar { display: none !important; }
+        /* (Opcional) oculta la "top-toolbar" flotante si aún existe */
+        .top-toolbar { display: none !important; }
 
-    /* Estilos simples para los íconos del header */
-    .vh-actions { 
-    margin-left: auto; 
-    display: flex; 
-    gap: 8px; 
-    align-items: center; 
-    }
-    .vh-icon {
-    background: rgba(255,255,255,0.15);
-    border: 0; 
-    padding: 6px 8px; 
-    border-radius: 6px; 
-    cursor: pointer;
-    color: #fff; 
-    font-size: 14px; 
-    }
-    .vh-icon:hover { background: rgba(255,255,255,0.25); }
-/* Empuja todos los controles superiores por debajo del header rojo */
-.leaflet-top { 
-    margin-top: calc(var(--h-header) + 12px); /* Empuja los controles debajo del header fijo */
-    left: 0 !important;
-    right: auto !important;
-    position: top !important;
-    pointer-events: auto;
-}
+        /* Estilos simples para los íconos del header */
+        .vh-actions { 
+        margin-left: auto; 
+        display: flex; 
+        gap: 8px; 
+        align-items: center; 
+        }
+        .vh-icon {
+        background: rgba(255,255,255,0.15);
+        border: 0; 
+        padding: 6px 8px; 
+        border-radius: 6px; 
+        cursor: pointer;
+        color: #fff; 
+        font-size: 14px; 
+        }
+        .vh-icon:hover { background: rgba(255,255,255,0.25); }
+        /* Empuja todos los controles superiores por debajo del header rojo */
+        .leaflet-top { 
+            margin-top: calc(var(--h-header) + 12px); /* Empuja los controles debajo del header fijo */
+            left: 0 !important;
+            right: auto !important;
+            position: top !important;
+            pointer-events: auto;
+        }
 
-/* Alineación y separación vertical estándar */
-.leaflet-top .leaflet-control {
-  clear: both;        /* que apilen en columna */
-  margin-bottom: 8px; /* separación entre controles */
-  position: top !important;
-}
+        /* Alineación y separación vertical estándar */
+        .leaflet-top .leaflet-control {
+        clear: both;        /* que apilen en columna */
+        margin-bottom: 8px; /* separación entre controles */
+        position: top !important;
+        }
 
-/* margen izquierdo “bonito” */
-.leaflet-left { 
-  margin-left: 10px; 
-}
+        /* margen izquierdo “bonito” */
+        .leaflet-left { 
+        margin-left: 10px; 
+        }
 
-/* Asegúrate de NO forzar el zoom a bottom-left en ningún sitio */
-.leaflet-control-zoom{
-    top: auto;
-    bottom: auto;
-    left: auto;
-}
+        /* Asegúrate de NO forzar el zoom a bottom-left en ningún sitio */
+        .leaflet-control-zoom{
+            top: auto;
+            bottom: auto;
+            left: auto;
+        }
 
-/* --- Cierre de sidebar al hacer click fuera o en la X --- */
-#sidebar .leaflet-sidebar-close {
-    cursor: pointer;
-}
-.leaflet-control-attribution {
-    text-align: right !important;
-    position: right 10px !important;
-}
-.leaflet-sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    z-index: 1000; /* Sobre el mapa */
-}
+        /* --- Cierre de sidebar al hacer click fuera o en la X --- */
+        #sidebar .leaflet-sidebar-close {
+            cursor: pointer;
+        }
+        .leaflet-control-attribution {
+            text-align: right !important;
+            position: right 10px !important;
+        }
+        .leaflet-sidebar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            z-index: 1000; /* Sobre el mapa */
+        }
 
         </style>
         <div class="leaflet-sidebar-content">
@@ -419,12 +454,12 @@ html, body { height: 100%; margin: 0; }
             </button>
 
             <button id="btnQuery" title="Consulta de Programas Sociales">
-                <i class="fa fa-search" style="color:#1976d2;"></i> <!-- Ícono tipo Esri -->
+                <i class="fa fa-search" style="color:#000; background-color: #e9e9e9;"></i> <!-- Ícono tipo Esri -->
             </button>
         </div>
 
 <!-- PANEL DE CONSULTA (sólo DEPARTAMENTO/PROVINCIA/DISTRITO) -->
-<div id="queryPanel" style="position:absolute; top:80px; left:100px; z-index:1200; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); padding:10px; width:360px; display:none;">
+<div id="queryPanel" style="position:absolute; top:80px; left:100px; z-index:1200; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); padding:10px; width:380px; display:none;">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
     <strong>Consulta de Programas Sociales</strong>
     <button id="closeQueryResults" title="Cerrar" style="border:0;background:transparent;cursor:pointer;">✖</button>
@@ -434,24 +469,32 @@ html, body { height: 100%; margin: 0; }
     <input id="filtroDepartamento" list="departamentosList" placeholder="DEPARTAMENTO" />
     <datalist id="departamentosList"></datalist>
 
-    <input id="filtroProvincia" list="provinciasList" placeholder="PROVINCIA" />
-    <datalist id="provinciasList"></datalist>
+    <input id="filtroProvincia" list="provinciasList" placeholder="PROVINCIA (o 'Todas')" />
+<datalist id="provinciasList">
+  <option value="Todas">
+</datalist>
 
-    <input id="filtroDistrito" list="distritosList" placeholder="DISTRITO" />
-    <datalist id="distritosList"></datalist>
+<input id="filtroDistrito" list="distritosList" placeholder="DISTRITO (o 'Todos')" />
+<datalist id="distritosList">
+  <option value="Todos">
+</datalist>
 
-    <button id="btnQueryExecute" style="padding:6px 10px; border:0; border-radius:6px; background:#bd0606; color:#fff; cursor:pointer;">Buscar</button>
+
+    <button id="btnQueryExecute" style="padding:6px 10px; border:0; border-radius:6px;font-family: Arial, Helvetica, sans-serif;font-size: 10px; background:#bd0606; color:#fff; cursor:pointer;">Buscar</button>
   </div>
 
-  <div id="queryResultsContainer" style="margin-top:10px; display:none; max-height:250px; overflow:auto;">
-    <table id="queryResultsTable" style="width:100%; border-collapse:collapse; font-size:12px;">
+  <div id="queryResultsContainer" style="margin-top:10px; display:none; max-height:350px; overflow:auto;">
+    <table id="queryResultsTable" style="width:100%; border-collapse:collapse; font-size:10px;font-family: Arial, Helvetica, sans-serif;">
       <thead>
-        <tr style="background:#f2f2f2;">
-          <th style="text-align:left; padding:6px;">DEPARTAMENTO</th>
-          <th style="text-align:left; padding:6px;">PROVINCIA</th>
-          <th style="text-align:left; padding:6px;">DISTRITO</th>
+        <tr style="background:hsla(0, 0%, 95%, 0.6);">
+            <th style="
+                width: 90px;
+            ">DEPARTAMENTO</th>
+            <th>PROVINCIA</th>
+            <th>DISTRITO</th>
+            <th>Programas MIDIS</th>
         </tr>
-      </thead>
+       </thead>
       <tbody></tbody>
     </table>
   </div>
@@ -639,7 +682,13 @@ html, body { height: 100%; margin: 0; }
                 },
                 mouseover: highlightFeature,
             });
-            var popupContent = '<table>\
+            var popupTitle = 'Programas Sociales MIDIS'; // Título del popup
+                var popupContent = '<h3>' + popupTitle + '</h3>' +
+                    '<table>\
+                    <tr>\
+                        <th scope="row">Programas</th>\
+                        <td>' + (feature.properties['Programas_MIDIS'] !== null ? autolinker.link(String(feature.properties['Programas_MIDIS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                     <tr>\
                         <th scope="row">UBIGEO</th>\
                         <td>' + (feature.properties['UBIGEO'] !== null ? autolinker.link(String(feature.properties['UBIGEO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -691,10 +740,6 @@ html, body { height: 100%; margin: 0; }
                     <tr>\
                         <th scope="row">PCA</th>\
                         <td>' + (feature.properties['PCA'] !== null ? autolinker.link(String(feature.properties['PCA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">PCA</th>\
-                        <td colspan="2"><strong>Programas MIDIS</strong><br />' + (feature.properties['Programas_MIDIS'] !== null ? autolinker.link(String(feature.properties['Programas_MIDIS']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
