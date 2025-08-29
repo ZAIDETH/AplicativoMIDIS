@@ -79,8 +79,10 @@
             
         }
         #layers-content .leaflet-control-layers-list {
-            max-height: 350px;
+            max-height: auto    ;
+            max-width: auto;
             overflow-y: auto;
+            width: 100% !important;
         }
         #layers-content .leaflet-control-layers-base,
         #layers-content .leaflet-control-layers-overlays {
@@ -90,6 +92,8 @@
         #layers-content label {
             font-size: 12px;
             color: #333;
+            display: block;
+            left: 0%;
         }
         #infoSidebar th, #infoSidebar td {
             padding: 5px;
@@ -167,16 +171,16 @@
         top: 0;               /* arranca en el borde superior del #map */
         right: 0;
         bottom: 0;
-        left: auto;
+        left: 0;
         z-index: 1500;        /* por encima del mapa y controles */
         width: 350px;         /* opcional: tu ancho */
         }
 
-        /* Asegura que el contenido del panel haga scroll si crece */
+        /* Asegura que el contenido del panel haga scroll si crece
         #sidebar .leaflet-sidebar-content {
         height: 100%;
         overflow: auto;
-        }
+        } */
 
         /* Ocultar pestañas nativas del sidebar: usaremos botones en el header */
         #sidebar .leaflet-sidebar-tabs { 
@@ -197,7 +201,7 @@
 /* El mapa ocupa el resto de la pantalla, debajo del header */
 html, body { height: 100%; margin: 0; }
 #map{
-  position: fixed;
+  position: absolute;
   top: var(--h-header);
   left: 0; right: 0; bottom: 0;
 }
@@ -241,6 +245,29 @@ html, body { height: 100%; margin: 0; }
 }
 .leaflet-top { margin-top: 12px; }
 .leaflet-left { margin-left: 12px; }
+#btnPrintContainer {
+    position: absolute;
+    top: 70px; /* Coloca el botón debajo del header de 64px de altura */
+    left: 20px;
+    z-index: 1000;
+}
+
+#btnPrint {
+    background-color: white; /* Sin fondo */
+    border: 2px; ; /* Sin borde */
+    border-color: #808080;
+    border-radius: 2px;
+    box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
+    color: #000; /* Color negro para el ícono */
+    font-size: 20px; /* Tamaño adecuado para el ícono */
+    cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
+    padding: 20; /* Sin padding para que solo se vea el ícono */
+}
+
+#btnPrint:hover {
+    color: #bd0606ff; /* Cambio de color al pasar el mouse */
+}
+
     </style>
     <title></title>
     </head>
@@ -260,14 +287,17 @@ html, body { height: 100%; margin: 0; }
     <style>
     .leaflet-sidebar-tabs-right {
         right: 0;
+        left: auto;
     }
     .leaflet-sidebar-tabs-right ul {
-        float: right;
+        float: left;
     }
     /* Asegurar que el contenido del sidebar haga scroll si es alto */
     #sidebar .leaflet-sidebar-content { 
-    height: 100%; 
-    overflow: auto; 
+    height: 80%; 
+    width: auto;
+    /* overflow: auto; */
+
     }
 
     /* (Opcional) oculta la "top-toolbar" flotante si aún existe */
@@ -295,7 +325,7 @@ html, body { height: 100%; margin: 0; }
     margin-top: calc(var(--h-header) + 12px); /* Empuja los controles debajo del header fijo */
     left: 0 !important;
     right: auto !important;
-    position: absolute !important;
+    position: top !important;
     pointer-events: auto;
 }
 
@@ -303,6 +333,7 @@ html, body { height: 100%; margin: 0; }
 .leaflet-top .leaflet-control {
   clear: both;        /* que apilen en columna */
   margin-bottom: 8px; /* separación entre controles */
+  position: top !important;
 }
 
 /* margen izquierdo “bonito” */
@@ -321,6 +352,11 @@ html, body { height: 100%; margin: 0; }
 #sidebar .leaflet-sidebar-close {
     cursor: pointer;
 }
+.leaflet-control-attribution {
+    text-align: right !important;
+    position: right: 10px !important;
+}
+
         </style>
         <div class="leaflet-sidebar-content">
             <div class="leaflet-sidebar-pane" id="legend">
@@ -343,6 +379,11 @@ html, body { height: 100%; margin: 0; }
         <button id="btnLegend" title="Leyenda">🧾</button>
         <button id="btnLayers" title="Capas">🗂️</button>
         <button id="btnBasemaps" title="Mapa base">🗺️</button>
+        </div>
+        <div id="btnPrintContainer">
+            <button id="btnPrint" title="Imprimir Mapa">
+                <i class="fa fa-print"></i> <!-- Ícono de impresión -->
+            </button>
         </div>
         <script src="static/js/custom.js"></script>
         <script src="js/qgis2web_expressions.js"></script>
@@ -390,7 +431,7 @@ html, body { height: 100%; margin: 0; }
         }).fitBounds([[-18.792526138955395,-89.94475065216048],[0.4272491007973172,-60.03575894076365]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'end'}});
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
          var tempDiv = document.createElement('div');
@@ -1314,165 +1355,167 @@ html, body { height: 100%; margin: 0; }
             renderLegendFromTree(overlaysTree);
 
                 // 1) Crear e inicializar el control
-var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false }).addTo(map);
+        var lay = L.control.layers.tree(null, overlaysTree, { collapsed: false }).addTo(map);
 
-// 2) Tomar el contenedor real del control y moverlo al panel
-const layersContentEl = document.getElementById('layers-content');
-const layContainer   = lay.getContainer();          // <div class="leaflet-control-layers ...">
-if (layersContentEl && layContainer && layContainer.parentNode) {
-  // lo sacamos de la esquina del mapa…
-  layContainer.parentNode.removeChild(layContainer);
-  // …y lo insertamos en el sidebar
-  layersContentEl.innerHTML = '';                   // limpia si recargas
-  layersContentEl.appendChild(layContainer);
-}
+        // 2) Tomar el contenedor real del control y moverlo al panel
+        const layersContentEl = document.getElementById('layers-content');
+        const layContainer   = lay.getContainer();          // <div class="leaflet-control-layers ...">
+        if (layersContentEl && layContainer && layContainer.parentNode) {
+        // lo sacamos de la esquina del mapa…
+        layContainer.parentNode.removeChild(layContainer);
+        // …y lo insertamos en el sidebar
+        layersContentEl.innerHTML = '';                   // limpia si recargas
+        layersContentEl.appendChild(layContainer);
+        }
 
-// (Opcional) evita que el scroll/click del control afecte al mapa
-L.DomEvent.disableClickPropagation(layContainer);
-L.DomEvent.disableScrollPropagation(layContainer);
+        // (Opcional) evita que el scroll/click del control afecte al mapa
+        L.DomEvent.disableClickPropagation(layContainer);
+        L.DomEvent.disableScrollPropagation(layContainer);
 
-        // Inyectar el control en el div #layers-content del sidebar
-        // const layersContentEl = document.getElementById('layers-content');                                  
-        // layersContentEl.appendChild(lay.onAdd(map));
-		document.addEventListener("DOMContentLoaded", function() {
-            // set new Layers List height which considers toggle icon
-            function newLayersListHeight() {
-                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
-                if (layerScrollbarElement) {
-                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
-                    var originalHeight = layersListElement.style.height 
-                        || window.getComputedStyle(layersListElement).height;
-                    var newHeight = parseFloat(originalHeight) - 50;
-                    layersListElement.style.height = newHeight + 'px';
-                }
-            }
-            // var isLayersListExpanded = true;
-            var controlLayersElement = document.querySelector('.leaflet-control-layers');
-            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
-            // toggle Collapsed/Expanded and apply new Layers List height
-            toggleLayerControl.addEventListener('click', function() {
-                if (isLayersListExpanded) {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                } else {
-                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
-                }
-                isLayersListExpanded = !isLayersListExpanded;
-                newLayersListHeight()
-            });	
-			// apply new Layers List height if toggle layerstree
-			if (controlLayersElement) {
-				controlLayersElement.addEventListener('click', function(event) {
-					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
-					if (toggleLayerHeaderPointer) {
-						newLayersListHeight();
-					}
-				});
-			}
-            // Collapsed/Expanded at Start to apply new height
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            setTimeout(function() {
-                toggleLayerControl.click();
-            }, 10);
-            // Collapsed touch/small screen
-            var isSmallScreen = window.innerWidth < 650;
-            if (isSmallScreen) {
-                setTimeout(function() {
-                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
-                    isLayersListExpanded = !isLayersListExpanded;
-                }, 500);
-            }  
-        });       
-        setBounds();
-        var i = 0;
-        layer_Departamentos_6.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            // layer.bindTooltip((layer.feature.properties['DEPARTAMEN'] !== null?String('<div style="color: #323232; font-size: 5pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['DEPARTAMEN']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Departamentos_6'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        var i = 0;
-        layer_Provincias_7.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['PROVINCIA'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['PROVINCIA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Provincias_7'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        var i = 0;
-        layer_Distritos_8.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['NOMBDIST'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['NOMBDIST']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Distritos_8'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
-        map.on("zoomend", function(){
-            resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
-        });
+                // Inyectar el control en el div #layers-content del sidebar
+                // const layersContentEl = document.getElementById('layers-content');                                  
+                // layersContentEl.appendChild(lay.onAdd(map));
+                document.addEventListener("DOMContentLoaded", function() {
+                    // set new Layers List height which considers toggle icon
+                    function newLayersListHeight() {
+                        var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                        if (layerScrollbarElement) {
+                            var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                            var originalHeight = layersListElement.style.height 
+                                || window.getComputedStyle(layersListElement).height;
+                            var newHeight = parseFloat(originalHeight) - 50;
+                            layersListElement.style.height = newHeight + 'px';
+                        }
+                    }
+                    // var isLayersListExpanded = true;
+                    var controlLayersElement = document.querySelector('.leaflet-control-layers');
+                    var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+                    // toggle Collapsed/Expanded and apply new Layers List height
+                    toggleLayerControl.addEventListener('click', function() {
+                        if (isLayersListExpanded) {
+                            controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                        } else {
+                            controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                        }
+                        isLayersListExpanded = !isLayersListExpanded;
+                        newLayersListHeight()
+                    });	
+                    // apply new Layers List height if toggle layerstree
+                    if (controlLayersElement) {
+                        controlLayersElement.addEventListener('click', function(event) {
+                            var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+                            if (toggleLayerHeaderPointer) {
+                                newLayersListHeight();
+                            }
+                        });
+                    }
+                    // Collapsed/Expanded at Start to apply new height
+                    setTimeout(function() {
+                        toggleLayerControl.click();
+                    }, 10);
+                    setTimeout(function() {
+                        toggleLayerControl.click();
+                    }, 10);
+                    // Collapsed touch/small screen
+                    var isSmallScreen = window.innerWidth < 650;
+                    if (isSmallScreen) {
+                        setTimeout(function() {
+                            controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                            isLayersListExpanded = !isLayersListExpanded;
+                        }, 500);
+                    }  
+                });       
+                setBounds();
+                var i = 0;
+                layer_Departamentos_6.eachLayer(function(layer) {
+                    var context = {
+                        feature: layer.feature,
+                        variables: {}
+                    };
+                    // layer.bindTooltip((layer.feature.properties['DEPARTAMEN'] !== null?String('<div style="color: #323232; font-size: 5pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['DEPARTAMEN']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Departamentos_6'});
+                    labels.push(layer);
+                    totalMarkers += 1;
+                    layer.added = true;
+                    addLabel(layer, i);
+                    i++;
+                });
+                var i = 0;
+                layer_Provincias_7.eachLayer(function(layer) {
+                    var context = {
+                        feature: layer.feature,
+                        variables: {}
+                    };
+                    layer.bindTooltip((layer.feature.properties['PROVINCIA'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['PROVINCIA']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Provincias_7'});
+                    labels.push(layer);
+                    totalMarkers += 1;
+                    layer.added = true;
+                    addLabel(layer, i);
+                    i++;
+                });
+                var i = 0;
+                layer_Distritos_8.eachLayer(function(layer) {
+                    var context = {
+                        feature: layer.feature,
+                        variables: {}
+                    };
+                    layer.bindTooltip((layer.feature.properties['NOMBDIST'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['NOMBDIST']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Distritos_8'});
+                    labels.push(layer);
+                    totalMarkers += 1;
+                    layer.added = true;
+                    addLabel(layer, i);
+                    i++;
+                });
+                resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
+                map.on("zoomend", function(){
+                    resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
+                });
+                map.on("layeradd", function(){
+                    resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
+                });
+                map.on("layerremove", function(){
+                    resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
+                });
+                </script>
+                <script>
+                window.addEventListener('load', () => {
+                    const mapEl = document.getElementById('map');
+                    const sidebarEl = document.getElementById('sidebar');
+                    if (mapEl && sidebarEl && sidebarEl.parentNode !== mapEl) {
+                    mapEl.appendChild(sidebarEl);   // ahora el sidebar es hijo de #map
+                    }
+                    mapEl.style.position = 'relative'; // (redundante si ya lo pusiste en CSS)
+                });
+                </script>
+                <script src="static/js/mainMap.js"></script>
+                <!-- <script src="static/js/home.js"></script>  -->
+                <script>
+        // Borra cualquier botón heredado/inyectado que no quieras
+        document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
+            .forEach(el => el.remove());
         </script>
         <script>
-        window.addEventListener('load', () => {
-            const mapEl = document.getElementById('map');
-            const sidebarEl = document.getElementById('sidebar');
-            if (mapEl && sidebarEl && sidebarEl.parentNode !== mapEl) {
-            mapEl.appendChild(sidebarEl);   // ahora el sidebar es hijo de #map
+        const HomeControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function() {
+            const c = L.DomUtil.create('div','leaflet-bar');
+            const a = L.DomUtil.create('a','',c);
+            a.href = '#'; a.title = 'Volver a vista inicial';
+            a.innerHTML = '<i class="fa fa-home"></i>';
+            L.DomEvent.on(a,'click',(e)=>{
+                L.DomEvent.preventDefault(e);
+                map.setView([-9.2,-75], 5);  // tu vista inicial
+            });
+            return c;
             }
-            mapEl.style.position = 'relative'; // (redundante si ya lo pusiste en CSS)
         });
+        map.addControl(new HomeControl());
         </script>
-        <script src="static/js/mainMap.js"></script>
-        <!-- <script src="static/js/home.js"></script>  -->
-         <script>
-  // Borra cualquier botón heredado/inyectado que no quieras
-  document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
-    .forEach(el => el.remove());
-</script>
-<script>
-  const HomeControl = L.Control.extend({
-    options: { position: 'topleft' },
-    onAdd: function() {
-      const c = L.DomUtil.create('div','leaflet-bar');
-      const a = L.DomUtil.create('a','',c);
-      a.href = '#'; a.title = 'Volver a vista inicial';
-      a.innerHTML = '<i class="fa fa-home"></i>';
-      L.DomEvent.on(a,'click',(e)=>{
-        L.DomEvent.preventDefault(e);
-        map.setView([-9.2,-75], 5);  // tu vista inicial
-      });
-      return c;
-    }
-  });
-  map.addControl(new HomeControl());
-</script>
-<script>
-  document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
-    .forEach(el => el.remove());
-</script>
-
+        <script>
+        document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
+            .forEach(el => el.remove());
+        </script>
+        <script src="static/js/impresion.js"></script>
+        <!-- Aquí está el botón de impresión justo debajo del visor-header -->
+        
     </body>
 </html>

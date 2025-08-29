@@ -24,7 +24,7 @@
 /* Estilo para el contenedor del botón de Estratificación */
 #estratificacionControlBtn {
     position: horizontal;
-    top: 100px; /* Ajustar según la posición de tus controles */
+    top: 50px; /* Ajustar según la posición de tus controles */
     left: 10px; /* Ajustar la distancia desde el borde derecho */
     z-index: 1001; /* Asegurarse de que el botón esté encima de otros controles */
     padding: 8px 12px;
