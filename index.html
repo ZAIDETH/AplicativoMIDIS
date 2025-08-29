@@ -255,7 +255,17 @@ html, body { height: 100%; margin: 0; }
     left: 20px;
     z-index: 1000;
 }
-
+#btnQuery i {
+    font-size: 18px; /* aumenta tamaño del icono */
+    background-color: hwb(0 100% 0% / 0); /* Sin fondo */
+    color:#000;
+    border: 2px;
+    border-color: #808080;
+    border-radius: 2px;
+    box-shadow: #808080 0px 2px 4px; /* Sombra para dar efecto flotante */
+    cursor: pointer; /* Cambiar el cursor cuando pasa por encima */
+    padding: 20; /* Sin padding para que solo se vea el ícono */
+}
 #btnPrint {
     background-color: white; /* Sin fondo */
     border: 2px; ; /* Sin borde */
@@ -403,11 +413,49 @@ html, body { height: 100%; margin: 0; }
         <button id="btnLayers" title="Capas">🗂️</button>
         <button id="btnBasemaps" title="Mapa base">🗺️</button>
         </div>
-        <div id="btnPrintContainer">
+        <div id="btnPrintContainer" style="display:flex; gap:5px; align-items:center;">
             <button id="btnPrint" title="Imprimir Mapa">
-                <i class="fa fa-print"></i> <!-- Ícono de impresión -->
+                <i class="fa fa-print"></i>
+            </button>
+
+            <button id="btnQuery" title="Consulta de Programas Sociales">
+                <i class="fa fa-search" style="color:#1976d2;"></i> <!-- Ícono tipo Esri -->
             </button>
         </div>
+
+<!-- PANEL DE CONSULTA (sólo DEPARTAMENTO/PROVINCIA/DISTRITO) -->
+<div id="queryPanel" style="position:absolute; top:80px; left:100px; z-index:1200; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.2); padding:10px; width:360px; display:none;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+    <strong>Consulta de Programas Sociales</strong>
+    <button id="closeQueryResults" title="Cerrar" style="border:0;background:transparent;cursor:pointer;">✖</button>
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1fr; gap:6px;">
+    <input id="filtroDepartamento" list="departamentosList" placeholder="DEPARTAMENTO" />
+    <datalist id="departamentosList"></datalist>
+
+    <input id="filtroProvincia" list="provinciasList" placeholder="PROVINCIA" />
+    <datalist id="provinciasList"></datalist>
+
+    <input id="filtroDistrito" list="distritosList" placeholder="DISTRITO" />
+    <datalist id="distritosList"></datalist>
+
+    <button id="btnQueryExecute" style="padding:6px 10px; border:0; border-radius:6px; background:#bd0606; color:#fff; cursor:pointer;">Buscar</button>
+  </div>
+
+  <div id="queryResultsContainer" style="margin-top:10px; display:none; max-height:250px; overflow:auto;">
+    <table id="queryResultsTable" style="width:100%; border-collapse:collapse; font-size:12px;">
+      <thead>
+        <tr style="background:#f2f2f2;">
+          <th style="text-align:left; padding:6px;">DEPARTAMENTO</th>
+          <th style="text-align:left; padding:6px;">PROVINCIA</th>
+          <th style="text-align:left; padding:6px;">DISTRITO</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
         <script src="static/js/custom.js"></script>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -434,6 +482,7 @@ html, body { height: 100%; margin: 0; }
         <script src="https://unpkg.com/leaflet-image@0.3.2/leaflet-image.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
          <script src="static/js/impresion.js"></script>
+        <script src="static/js/consulta.js"></script>
         <!-- Aquí está el botón de impresión justo debajo del visor-header -->
         <script>
         var highlightLayer;
@@ -512,6 +561,7 @@ html, body { height: 100%; margin: 0; }
         //         imperial: false,
         //     })
         //     .addTo(map);
+
         // Sidebar
         const sidebar = L.control.sidebar({ container: 'sidebar', autopan: true, closeButton: true }).addTo(map);
         sidebar.close(); // arranca cerrado
@@ -741,6 +791,8 @@ html, body { height: 100%; margin: 0; }
             style: style_Programassociales_2_0,
         });
         bounds_group.addLayer(layer_Programassociales_2);
+        map.addLayer(layer_Programassociales_2);
+        window.layerProgramas = layer_Programassociales_2;
         function pop_EscenariodePobrezaExtremaPer_3(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -849,7 +901,7 @@ html, body { height: 100%; margin: 0; }
             style: style_EscenariodePobrezaExtremaPer_3_0,
         });
         bounds_group.addLayer(layer_EscenariodePobrezaExtremaPer_3);
-        map.addLayer(layer_EscenariodePobrezaExtremaPer_3);
+        // map.addLayer(layer_EscenariodePobrezaExtremaPer_3);
         function pop_EscenariodePobrezaExtremaLima_4(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -971,7 +1023,7 @@ html, body { height: 100%; margin: 0; }
             style: style_EscenariodePobrezaExtremaLima_4_0,
         });
         bounds_group.addLayer(layer_EscenariodePobrezaExtremaLima_4);
-        map.addLayer(layer_EscenariodePobrezaExtremaLima_4);
+        // map.addLayer(layer_EscenariodePobrezaExtremaLima_4);
         function pop_ProgramaPCAComedoresgeorreferenciados_5(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -1509,6 +1561,7 @@ html, body { height: 100%; margin: 0; }
                 map.on("layerremove", function(){
                     resetLabels([layer_Departamentos_6,layer_Provincias_7,layer_Distritos_8]);
                 });
+                
                 </script>
                 <script>
                 window.addEventListener('load', () => {
@@ -1537,7 +1590,7 @@ html, body { height: 100%; margin: 0; }
             a.innerHTML = '<i class="fa fa-home"></i>';
             L.DomEvent.on(a,'click',(e)=>{
                 L.DomEvent.preventDefault(e);
-                map.setView([-9.2,-75], 5.5);  // tu vista inicial
+                map.setView([-9.2,-75], 5.3);  // tu vista inicial
             });
             return c;
             }
@@ -1548,5 +1601,12 @@ html, body { height: 100%; margin: 0; }
         document.querySelectorAll('.btns-control.leaflet-control, .leaflet-bar.btns-control')
             .forEach(el => el.remove());
         </script> 
+        <script>
+  // Abrir el panel al clic del botón “lupa”
+  document.getElementById('btnQuery').addEventListener('click', () => {
+    document.getElementById('queryPanel').style.display = 'block';
+    if (window.sidebarRef) { window.sidebarRef.open('layers'); }
+  });
+</script>
     </body>
 </html>

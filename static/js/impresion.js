@@ -61,3 +61,9 @@ document.getElementById('btnPrint').addEventListener('click', function () {
         });
     });
 });
+
+// // Llamar la función de impresión cuando el botón de impresión sea presionado
+// document.getElementById('btnPrint').addEventListener('click', imprimirMapa);
+// Función para imprimir el mapa
+document.getElementById('btnPrint').addEventListener('click', function () { window.print();});
+
